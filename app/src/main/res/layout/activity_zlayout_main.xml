@@ -9,8 +9,21 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="zlayout.mmlovesyy.com.zlayout.ZLayoutMainActivity">
 
-    <TextView
+    <Button
+        android:id="@+id/add_img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="click me to add a new image" />
+
+    <zlayout.mmlovesyy.com.zlayout.ZLayout xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/z"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_below="@id/add_img"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/background_zlayout"
+        tools:context="zlayout.mmlovesyy.com.zlayout.ZLayoutMainActivity">
+
+    </zlayout.mmlovesyy.com.zlayout.ZLayout>
+
 </RelativeLayout>
