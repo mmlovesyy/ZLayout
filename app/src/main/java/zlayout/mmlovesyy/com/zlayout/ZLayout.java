@@ -13,6 +13,10 @@ public class ZLayout extends ViewGroup {
 
     private static final String TAG = "ZLayout";
 
+    private int mWidth;
+    private int mHeight;
+    private int mLineCount;
+
     public ZLayout(Context context) {
         super(context);
     }
@@ -32,26 +36,85 @@ public class ZLayout extends ViewGroup {
 
         measureChildren(widthMeasureSpec, heightMeasureSpec);
 
-        int measureWidth = measure(widthMeasureSpec);
-        int measureHeight = measure(heightMeasureSpec);
+        mWidth = measureWidth(widthMeasureSpec);
+        mHeight = measureHeight(heightMeasureSpec);
 
-        setMeasuredDimension(measureWidth, measureHeight);
+        setMeasuredDimension(mWidth, mHeight);
     }
 
-    private int measure(int widthMeasureSpec) {
+    // note: for simplicity assume children have the same dimension
+    private int measureWidth(int widthMeasureSpec) {
 
-        int result = 0;
+        int count = getChildCount();
+        int childWidth = count > 0 ? getChildAt(0).getMeasuredWidth() : 0;
+        int needWidthInSingleLine = count * childWidth;
+
+        int width = 0;
+
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
 
         switch (widthMode) {
 
-            case MeasureSpec.AT_MOST:
             case MeasureSpec.EXACTLY:
-                result = widthSize;
+                width = widthSize;
+
+                if (needWidthInSingleLine > 0) {
+                    mLineCount = (int) Math.ceil(needWidthInSingleLine * 1.0 / width);
+
+                } else {
+                    mLineCount = 0;
+                }
+
+                break;
+
+            case MeasureSpec.AT_MOST:
+                if (count > 0) {
+                    width = needWidthInSingleLine >= widthSize ? widthSize : needWidthInSingleLine;
+
+                } else {
+                    width = 0;
+                }
+
+                break;
+
+            case MeasureSpec.UNSPECIFIED:
+                width = needWidthInSingleLine;
+                break;
+
+        }
+
+        return width;
+    }
+
+    private int measureHeight(int heightMeasureSpec) {
+
+        int count = getChildCount();
+        int childHeight = count > 0 ? getChildAt(0).getMeasuredHeight() : 0;
+
+        int height = 0;
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        switch (heightMode) {
+
+            case MeasureSpec.EXACTLY:
+                height = heightSize;
+                break;
+
+            case MeasureSpec.AT_MOST:
+                int needHeight = mLineCount * childHeight;
+                height = needHeight >= heightSize ? heightSize : needHeight;
+
+                break;
+
+            case MeasureSpec.UNSPECIFIED:
+                height = mLineCount * childHeight;
+
                 break;
         }
-        return result;
+
+        return height;
     }
 
     @Override
