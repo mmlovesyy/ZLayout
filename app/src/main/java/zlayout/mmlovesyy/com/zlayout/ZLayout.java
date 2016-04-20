@@ -123,8 +123,8 @@ public class ZLayout extends ViewGroup {
         Log.d(TAG, "onLayout...");
 
         int parentWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
-        int startX = l + getPaddingLeft();
-        int startY = t + getPaddingTop();
+        int startX = getPaddingLeft();
+        int startY = getPaddingTop();
 
         for (int i = 0, count = getChildCount(); i < count; i++) {
             View child = getChildAt(i);
@@ -139,7 +139,7 @@ public class ZLayout extends ViewGroup {
                     return;
                 }
 
-                startX = l + getPaddingLeft();
+                startX = getPaddingLeft();
                 startY += childHeight;
             }
 
