@@ -148,4 +148,9 @@ public class ZLayout extends ViewGroup {
             startX += childWidth;
         }
     }
+
+    @Override
+    public ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
+        return new MarginLayoutParams(getContext(), attrs);
+    }
 }
