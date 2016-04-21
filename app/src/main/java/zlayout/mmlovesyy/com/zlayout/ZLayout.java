@@ -84,7 +84,7 @@ public class ZLayout extends ViewGroup {
 
             case MeasureSpec.AT_MOST:
                 if (needWidthInSingleLine > 0) {
-                    width = needWidthInSingleLine >= widthSize ? widthSize : needWidthInSingleLine;
+                    width = Math.min(needWidthInSingleLine, widthSize);
 
                     int widthUsedPerLine = 0;
                     for (int i = 1; i <= count; i++) {
@@ -138,7 +138,7 @@ public class ZLayout extends ViewGroup {
 
             case MeasureSpec.AT_MOST:
                 int needHeight = mLineCount * childHeight;
-                height = needHeight >= heightSize ? heightSize : needHeight;
+                height = Math.min(needHeight, heightSize);
 
                 break;
 
