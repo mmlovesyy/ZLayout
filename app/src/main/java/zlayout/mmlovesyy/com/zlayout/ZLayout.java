@@ -45,6 +45,8 @@ public class ZLayout extends ViewGroup {
     // note: for simplicity assume children have the same dimension
     private int measureWidth(int widthMeasureSpec) {
 
+        Log.d(TAG, "enter measureWidth(), widthMeasureSpec: " + MeasureSpec.toString(widthMeasureSpec));
+
         int count = getChildCount();
         int childWidth = count > 0 ? getChildAt(0).getMeasuredWidth() : 0;
         int needWidthInSingleLine = count * childWidth;
@@ -60,7 +62,19 @@ public class ZLayout extends ViewGroup {
                 width = widthSize;
 
                 if (needWidthInSingleLine > 0) {
-                    mLineCount = (int) Math.ceil(needWidthInSingleLine * 1.0 / width);
+
+                    int widthUsedPerLine = 0;
+                    for (int i = 1; i <= count; i++) {
+
+                        if (widthUsedPerLine + childWidth < width) {
+                            widthUsedPerLine += childWidth;
+
+                        } else {
+                            break;
+                        }
+                    }
+
+                    mLineCount = (int) Math.ceil(needWidthInSingleLine * 1.0 / widthUsedPerLine);
 
                 } else {
                     mLineCount = 0;
@@ -69,25 +83,45 @@ public class ZLayout extends ViewGroup {
                 break;
 
             case MeasureSpec.AT_MOST:
-                if (count > 0) {
+                if (needWidthInSingleLine > 0) {
                     width = needWidthInSingleLine >= widthSize ? widthSize : needWidthInSingleLine;
+
+                    int widthUsedPerLine = 0;
+                    for (int i = 1; i <= count; i++) {
+
+                        if (widthUsedPerLine + childWidth < width) {
+                            widthUsedPerLine += childWidth;
+
+                        } else {
+                            break;
+                        }
+                    }
+
+                    mLineCount = (int) Math.ceil(needWidthInSingleLine * 1.0 / widthUsedPerLine);
 
                 } else {
                     width = 0;
+                    mLineCount = 0;
                 }
 
                 break;
 
             case MeasureSpec.UNSPECIFIED:
                 width = needWidthInSingleLine;
+                mLineCount = 1;
+
                 break;
 
         }
+
+        Log.d(TAG, "after measureWidth(), mWidth: " + width + ", mLineCount: " + mLineCount);
 
         return width;
     }
 
     private int measureHeight(int heightMeasureSpec) {
+
+        Log.d(TAG, "enter measureHeight(), heightMeasureSpec: " + MeasureSpec.toString(heightMeasureSpec));
 
         int count = getChildCount();
         int childHeight = count > 0 ? getChildAt(0).getMeasuredHeight() : 0;
@@ -113,6 +147,8 @@ public class ZLayout extends ViewGroup {
 
                 break;
         }
+
+        Log.d(TAG, "after measureHeight(), mWidth: " + height);
 
         return height;
     }
