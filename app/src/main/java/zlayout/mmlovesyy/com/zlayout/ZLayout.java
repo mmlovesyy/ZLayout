@@ -148,7 +148,7 @@ public class ZLayout extends ViewGroup {
                 break;
         }
 
-        Log.d(TAG, "after measureHeight(), mWidth: " + height);
+        Log.d(TAG, "after measureHeight(), mHeight: " + height);
 
         return height;
     }
