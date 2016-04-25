@@ -1,23 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/screen"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="zlayout.mmlovesyy.com.zlayout.ZLayoutMainActivity">
+    android:orientation="vertical">
 
-    <zlayout.mmlovesyy.com.zlayout.ZLayout xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/z"
-        android:layout_width="wrap_content"
+    <Button xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/btn"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/background_zlayout"
+        android:layout_marginBottom="10dp"
+        android:background="?attr/selectableItemBackground"
+        android:text="click to add images..." />
+
+    <ScrollView xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
         tools:context="zlayout.mmlovesyy.com.zlayout.ZLayoutMainActivity">
 
-    </zlayout.mmlovesyy.com.zlayout.ZLayout>
+        <zlayout.mmlovesyy.com.zlayout.ZLayout xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/z"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_zlayout"
+            tools:context="zlayout.mmlovesyy.com.zlayout.ZLayoutMainActivity">
 
-</RelativeLayout>
+        </zlayout.mmlovesyy.com.zlayout.ZLayout>
+
+    </ScrollView>
+
+</LinearLayout>
