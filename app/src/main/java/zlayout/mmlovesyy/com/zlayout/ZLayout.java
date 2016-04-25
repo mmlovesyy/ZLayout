@@ -66,7 +66,7 @@ public class ZLayout extends ViewGroup {
                     int widthUsedPerLine = 0;
                     for (int i = 1; i <= count; i++) {
 
-                        if (widthUsedPerLine + childWidth < width) {
+                        if (widthUsedPerLine + childWidth <= width) {
                             widthUsedPerLine += childWidth;
 
                         } else {
@@ -89,7 +89,7 @@ public class ZLayout extends ViewGroup {
                     int widthUsedPerLine = 0;
                     for (int i = 1; i <= count; i++) {
 
-                        if (widthUsedPerLine + childWidth < width) {
+                        if (widthUsedPerLine + childWidth <= width) {
                             widthUsedPerLine += childWidth;
 
                         } else {
