@@ -48,8 +48,8 @@ public class ZLayout extends ViewGroup {
         Log.d(TAG, "enter measureWidth(), widthMeasureSpec: " + MeasureSpec.toString(widthMeasureSpec));
 
         int count = getChildCount();
-        int childWidth = count > 0 ? getChildAt(0).getMeasuredWidth() : 0;
-        int needWidthInSingleLine = count * childWidth;
+        int childWidth = count > 0 ? getMeasuredWithWithMargins(getChildAt(0)) : 0;
+        int needWidth = count * childWidth;
 
         int width = 0;
 
@@ -61,20 +61,20 @@ public class ZLayout extends ViewGroup {
             case MeasureSpec.EXACTLY:
                 width = widthSize;
 
-                if (needWidthInSingleLine > 0) {
+                if (needWidth > 0) {
 
-                    int widthUsedPerLine = 0;
+                    int widthUsed = 0;
                     for (int i = 1; i <= count; i++) {
 
-                        if (widthUsedPerLine + childWidth <= width) {
-                            widthUsedPerLine += childWidth;
+                        if (widthUsed + childWidth <= width) {
+                            widthUsed += childWidth;
 
                         } else {
                             break;
                         }
                     }
 
-                    mLineCount = (int) Math.ceil(needWidthInSingleLine * 1.0 / widthUsedPerLine);
+                    mLineCount = (int) Math.ceil(needWidth * 1.0 / widthUsed);
 
                 } else {
                     mLineCount = 0;
@@ -83,21 +83,21 @@ public class ZLayout extends ViewGroup {
                 break;
 
             case MeasureSpec.AT_MOST:
-                if (needWidthInSingleLine > 0) {
-                    width = Math.min(needWidthInSingleLine, widthSize);
+                if (needWidth > 0) {
+                    width = Math.min(needWidth, widthSize);
 
-                    int widthUsedPerLine = 0;
+                    int widthUsed = 0;
                     for (int i = 1; i <= count; i++) {
 
-                        if (widthUsedPerLine + childWidth <= width) {
-                            widthUsedPerLine += childWidth;
+                        if (widthUsed + childWidth <= width) {
+                            widthUsed += childWidth;
 
                         } else {
                             break;
                         }
                     }
 
-                    mLineCount = (int) Math.ceil(needWidthInSingleLine * 1.0 / widthUsedPerLine);
+                    mLineCount = (int) Math.ceil(needWidth * 1.0 / widthUsed);
 
                 } else {
                     width = 0;
@@ -107,7 +107,7 @@ public class ZLayout extends ViewGroup {
                 break;
 
             case MeasureSpec.UNSPECIFIED:
-                width = needWidthInSingleLine;
+                width = needWidth;
                 mLineCount = 1;
 
                 break;
@@ -124,7 +124,7 @@ public class ZLayout extends ViewGroup {
         Log.d(TAG, "enter measureHeight(), heightMeasureSpec: " + MeasureSpec.toString(heightMeasureSpec));
 
         int count = getChildCount();
-        int childHeight = count > 0 ? getChildAt(0).getMeasuredHeight() : 0;
+        int childHeight = count > 0 ? getMeasuredHeightWithMargins(getChildAt(0)) : 0;
 
         int height = 0;
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
@@ -158,35 +158,65 @@ public class ZLayout extends ViewGroup {
 
         Log.d(TAG, "onLayout...");
 
-        int parentWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
-        int startX = getPaddingLeft();
-        int startY = getPaddingTop();
+        final int paddingLeft = getPaddingLeft();
+        final int paddingRight = getPaddingRight();
+
+        int contentWidth = r - l - paddingLeft - paddingRight;
+        int currentLeft = paddingLeft;
+        int currentTop = getPaddingTop();
 
         for (int i = 0, count = getChildCount(); i < count; i++) {
             View child = getChildAt(i);
 
-            int childHeight = child.getMeasuredHeight();
-            int childWidth = child.getMeasuredWidth();
+            int childHeight = getWidthWithMargins(child);
+            int childWidth = getHeightWithMargins(child);
 
-            if (startX + childWidth > parentWidth) {
+            if (currentLeft + childWidth > contentWidth) {
 
                 if (i == 0) {
                     Log.d(TAG, "no enough space for the 1st child view");
                     return;
                 }
 
-                startX = getPaddingLeft();
-                startY += childHeight;
+                currentLeft = paddingLeft;
+                currentTop += childHeight;
             }
 
-            child.layout(startX, startY, startX + childWidth, startY + childHeight);
+            child.layout(currentLeft, currentTop, currentLeft + childWidth, currentTop + childHeight);
 
-            startX += childWidth;
+            currentLeft += childWidth;
         }
+    }
+
+    private static int getWidthWithMargins(View view) {
+        final MarginLayoutParams mlp = (MarginLayoutParams) view.getLayoutParams();
+        return view.getWidth() + mlp.leftMargin + mlp.rightMargin;
+    }
+
+    private static int getMeasuredWithWithMargins(View view) {
+        final MarginLayoutParams mlp = (MarginLayoutParams) view.getLayoutParams();
+        return view.getMeasuredWidth() + mlp.leftMargin + mlp.rightMargin;
+    }
+
+    private static int getHeightWithMargins(View view) {
+        final MarginLayoutParams mlp = (MarginLayoutParams) view.getLayoutParams();
+        return view.getHeight() + mlp.topMargin + mlp.bottomMargin;
+    }
+
+    private static int getMeasuredHeightWithMargins(View view) {
+        final MarginLayoutParams mlp = (MarginLayoutParams) view.getLayoutParams();
+        return view.getMeasuredHeight() + mlp.topMargin + mlp.bottomMargin;
     }
 
     @Override
     public ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new MarginLayoutParams(getContext(), attrs);
     }
+
+    @Override
+    protected LayoutParams generateDefaultLayoutParams() {
+        return new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+    }
+
+
 }
