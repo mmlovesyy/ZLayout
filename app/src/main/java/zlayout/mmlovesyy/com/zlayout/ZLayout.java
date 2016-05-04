@@ -48,7 +48,7 @@ public class ZLayout extends ViewGroup {
         Log.d(TAG, "enter measureWidth(), widthMeasureSpec: " + MeasureSpec.toString(widthMeasureSpec));
 
         int count = getChildCount();
-        int childWidth = count > 0 ? getChildAt(0).getMeasuredWidth() : 0;
+        int childWidth = count > 0 ? getMeasuredWidthWithMargins(getChildAt(0)) : 0;
         int needWidth = count * childWidth;
 
         int width = 0;
@@ -124,7 +124,7 @@ public class ZLayout extends ViewGroup {
         Log.d(TAG, "enter measureHeight(), heightMeasureSpec: " + MeasureSpec.toString(heightMeasureSpec));
 
         int count = getChildCount();
-        int childHeight = count > 0 ? getChildAt(0).getMeasuredHeight() : 0;
+        int childHeight = count > 0 ? getMeasuredHeightWithMargins(getChildAt(0)) : 0;
 
         int height = 0;
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
@@ -165,8 +165,8 @@ public class ZLayout extends ViewGroup {
         for (int i = 0, count = getChildCount(); i < count; i++) {
             View child = getChildAt(i);
 
-            int childHeight = child.getMeasuredHeight();
-            int childWidth = child.getMeasuredWidth();
+            int childHeight = getMeasuredHeightWithMargins(child);
+            int childWidth = getMeasuredWidthWithMargins(child);
 
             if (startX + childWidth > contentWidth) {
 
@@ -185,8 +185,43 @@ public class ZLayout extends ViewGroup {
         }
     }
 
+    private static int getMeasuredWidthWithMargins(View v) {
+        ZLayout.LayoutParams lp = (LayoutParams) v.getLayoutParams();
+        return v.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
+    }
+
+    private static int getMeasuredHeightWithMargins(View v) {
+        ZLayout.LayoutParams lp = (LayoutParams) v.getLayoutParams();
+        return v.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
+    }
+
     @Override
-    public ViewGroup.LayoutParams generateLayoutParams(AttributeSet attrs) {
-        return new MarginLayoutParams(getContext(), attrs);
+    public LayoutParams generateLayoutParams(AttributeSet attrs) {
+        return new LayoutParams(getContext(), attrs);
+    }
+
+    @Override
+    public LayoutParams generateDefaultLayoutParams() {
+        return new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+    }
+
+
+    public static class LayoutParams extends ViewGroup.MarginLayoutParams {
+
+        public LayoutParams(Context c, AttributeSet attrs) {
+            super(c, attrs);
+        }
+
+        public LayoutParams(int width, int height) {
+            super(width, height);
+        }
+
+        public LayoutParams(MarginLayoutParams source) {
+            super(source);
+        }
+
+        public LayoutParams(ViewGroup.LayoutParams source) {
+            super(source);
+        }
     }
 }
