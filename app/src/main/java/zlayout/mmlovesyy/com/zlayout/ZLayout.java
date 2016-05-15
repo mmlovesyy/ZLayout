@@ -98,6 +98,7 @@ public class ZLayout extends ViewGroup {
                     }
 
                     mLineCount = (int) Math.ceil(needWidth * 1.0 / widthUsedPerLine);
+                    width = widthUsedPerLine;
 
                 } else {
                     width = 0;
@@ -165,10 +166,14 @@ public class ZLayout extends ViewGroup {
         for (int i = 0, count = getChildCount(); i < count; i++) {
             View child = getChildAt(i);
 
-            int childHeight = getMeasuredHeightWithMargins(child);
-            int childWidth = getMeasuredWidthWithMargins(child);
+            int childHeight = child.getMeasuredHeight();
+            int childWidth = child.getMeasuredWidth();
 
-            if (startX + childWidth > contentWidth) {
+            ZLayout.LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            final int leftMargin = lp.leftMargin;
+            final int topMargin = lp.topMargin;
+
+            if (startX + leftMargin + childWidth > contentWidth) {
 
                 if (i == 0) {
                     Log.d(TAG, "no enough space for the 1st child view");
@@ -176,10 +181,11 @@ public class ZLayout extends ViewGroup {
                 }
 
                 startX = getPaddingLeft();
-                startY += childHeight;
+                startY += childHeight + topMargin;
             }
 
-            child.layout(startX, startY, startX + childWidth, startY + childHeight);
+            startX += leftMargin;
+            child.layout(startX, startY + topMargin, startX + childWidth, startY + topMargin + childHeight);
 
             startX += childWidth;
         }
