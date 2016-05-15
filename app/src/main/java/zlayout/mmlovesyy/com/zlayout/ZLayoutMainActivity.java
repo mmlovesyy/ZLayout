@@ -20,9 +20,13 @@ public class ZLayoutMainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ImageView img = new ImageView(getApplicationContext());
                 img.setImageDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
+                img.setPadding(10, 20, 20, 10);
+                img.setBackgroundDrawable(getResources().getDrawable(R.drawable.background_child));
                 ViewGroup.MarginLayoutParams lp = new ZLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 lp.leftMargin = 200;
                 lp.topMargin = 100;
+                lp.rightMargin = 50;
+                lp.bottomMargin = 50;
                 zLayout.addView(img, lp);
             }
         });

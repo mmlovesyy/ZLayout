@@ -181,13 +181,11 @@ public class ZLayout extends ViewGroup {
                 }
 
                 startX = getPaddingLeft();
-                startY += childHeight + topMargin;
+                startY += getMeasuredHeightWithMargins(child);
             }
 
-            startX += leftMargin;
-            child.layout(startX, startY + topMargin, startX + childWidth, startY + topMargin + childHeight);
-
-            startX += childWidth;
+            child.layout(startX + leftMargin, startY + topMargin, startX + leftMargin + childWidth, startY + topMargin + childHeight);
+            startX += getMeasuredWidthWithMargins(child);
         }
     }
 
