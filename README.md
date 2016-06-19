@@ -5,6 +5,11 @@ This is a customized layout.
 A muti-line layout which would behave as a horizontal LinearLayout but places new added child views in next line when there is no enough horizontal space.
 
 Just like a Z !
+<br />
+<center>
+<img src="demo.gif" width="400px" />
+</center>
+<br />
 
 todo list:
 
