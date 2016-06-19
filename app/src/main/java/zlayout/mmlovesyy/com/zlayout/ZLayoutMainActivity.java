@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class ZLayoutMainActivity extends AppCompatActivity {
 
@@ -15,18 +16,24 @@ public class ZLayoutMainActivity extends AppCompatActivity {
 
         final ZLayout zLayout = (ZLayout) findViewById(R.id.z);
 
+        final String[] s = new String[]{"xiaona", "linus", "lei", "xueyan.lin"};
+
         findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ImageView img = new ImageView(getApplicationContext());
-                img.setImageDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
-                img.setPadding(10, 20, 20, 10);
+                TextView img = new TextView(getApplicationContext());
+                img.setText(s[(int) Math.floor(Math.random() * s.length)]);
                 img.setBackgroundDrawable(getResources().getDrawable(R.drawable.background_child));
+                img.setPadding(5, 5, 5, 5);
+                img.setTextColor(getResources().getColor(R.color.colorPrimary));
+
+//                ImageView img = new ImageView(getApplicationContext());
+//                img.setImageDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
                 ViewGroup.MarginLayoutParams lp = new ZLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                lp.leftMargin = 200;
-                lp.topMargin = 100;
-                lp.rightMargin = 50;
-                lp.bottomMargin = 50;
+                lp.leftMargin = 20;
+                lp.topMargin = 10;
+                lp.rightMargin = 0;
+                lp.bottomMargin = 0;
                 zLayout.addView(img, lp);
             }
         });

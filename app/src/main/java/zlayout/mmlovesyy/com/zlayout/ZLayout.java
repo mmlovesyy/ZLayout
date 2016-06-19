@@ -42,14 +42,20 @@ public class ZLayout extends ViewGroup {
         setMeasuredDimension(mWidth, mHeight);
     }
 
-    // note: for simplicity assume children have the same dimension
     private int measureWidth(int widthMeasureSpec) {
 
         Log.d(TAG, "enter measureWidth(), widthMeasureSpec: " + MeasureSpec.toString(widthMeasureSpec));
 
         int count = getChildCount();
-        int childWidth = count > 0 ? getMeasuredWidthWithMargins(getChildAt(0)) : 0;
-        int needWidth = count * childWidth;
+
+        if (count == 0) {
+            return 0;
+        }
+
+        int needWidth = 0;
+        for (int i = 0; i < count; i++) {
+            needWidth += getMeasuredWidthWithMargins(getChildAt(i));
+        }
 
         int width = 0;
 
@@ -63,18 +69,25 @@ public class ZLayout extends ViewGroup {
 
                 if (needWidth > 0) {
 
-                    int widthUsed = 0;
-                    for (int i = 1; i <= count; i++) {
+                    mLineCount = 1;
 
-                        if (widthUsed + childWidth <= width) {
-                            widthUsed += childWidth;
+                    int widthUsed = 0;
+                    for (int i = 0; i < count; i++) {
+
+                        View child = getChildAt(i);
+                        LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                        final int leftMargin = lp.leftMargin;
+                        final int childMeasuredWidth = child.getMeasuredWidth();
+
+                        if (widthUsed + childMeasuredWidth + leftMargin <= width) {
+                            widthUsed += childMeasuredWidth + leftMargin;
 
                         } else {
-                            break;
+                            i--;
+                            widthUsed = 0;
+                            mLineCount++;
                         }
                     }
-
-                    mLineCount = (int) Math.ceil(needWidth * 1.0 / widthUsed);
 
                 } else {
                     mLineCount = 0;
@@ -84,21 +97,38 @@ public class ZLayout extends ViewGroup {
 
             case MeasureSpec.AT_MOST:
                 if (needWidth > 0) {
+
+                    mLineCount = 1;
+
                     width = Math.min(needWidth, widthSize);
 
-                    int widthUsedPerLine = 0;
-                    for (int i = 1; i <= count; i++) {
+                    int widthUsed = 0;
+                    int maxWidthUsed = 0;
+                    for (int i = 0; i < count; i++) {
 
-                        if (widthUsedPerLine + childWidth <= width) {
-                            widthUsedPerLine += childWidth;
+                        View child = getChildAt(i);
+                        final int childMeasuredWidth = child.getMeasuredWidth();
+                        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                        final int leftMargin = lp.leftMargin;
+
+                        if (widthUsed + childMeasuredWidth + leftMargin <= width) {
+                            widthUsed += childMeasuredWidth + leftMargin;
 
                         } else {
-                            break;
+
+//                            if (mLineCount) {
+//                                break;
+//                            }
+
+                            i--;
+                            widthUsed = 0;
+                            mLineCount++;
                         }
+
+                        maxWidthUsed = Math.max(maxWidthUsed, widthUsed);
                     }
 
-                    mLineCount = (int) Math.ceil(needWidth * 1.0 / widthUsedPerLine);
-                    width = widthUsedPerLine;
+                    width = maxWidthUsed;
 
                 } else {
                     width = 0;
@@ -169,9 +199,16 @@ public class ZLayout extends ViewGroup {
             int childHeight = child.getMeasuredHeight();
             int childWidth = child.getMeasuredWidth();
 
+            Log.d(TAG, "childHeight: " + childHeight);
+            Log.d(TAG, "childWidth: " + childWidth);
+
             ZLayout.LayoutParams lp = (LayoutParams) child.getLayoutParams();
             final int leftMargin = lp.leftMargin;
             final int topMargin = lp.topMargin;
+
+            Log.d(TAG, "startX: " + startX);
+            Log.d(TAG, "leftMargin: " + leftMargin);
+            Log.d(TAG, "contentWidth: " + contentWidth);
 
             if (startX + leftMargin + childWidth > contentWidth) {
 
