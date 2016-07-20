@@ -10,6 +10,13 @@ import android.view.ViewGroup;
  * Created by cmm on 16/3/7.
  */
 public class ZLayout extends ViewGroup {
+
+    private static final String TAG = "ZLayout";
+
+    private int mWidth;
+    private int mHeight;
+    private int mLineCount;
+
     public ZLayout(Context context) {
         super(context);
     }
@@ -24,107 +31,218 @@ public class ZLayout extends ViewGroup {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+        Log.d(TAG, "onMeasure...");
 
         measureChildren(widthMeasureSpec, heightMeasureSpec);
 
-        int measureWidth = measureWidth(widthMeasureSpec);
-        int measureHeight = measureHeight(heightMeasureSpec);
+        mWidth = measureWidth(widthMeasureSpec);
+        mHeight = measureHeight(heightMeasureSpec);
 
-        setMeasuredDimension(measureWidth, measureHeight);
+        setMeasuredDimension(mWidth, mHeight);
     }
 
-    private int measureWidth(int pWidthMeasureSpec) {
-        int result = 0;
-        int widthMode = MeasureSpec.getMode(pWidthMeasureSpec);// 得到模式
-        int widthSize = MeasureSpec.getSize(pWidthMeasureSpec);// 得到尺寸
+    private int measureWidth(int widthMeasureSpec) {
+
+        Log.d(TAG, "enter measureWidth(), widthMeasureSpec: " + MeasureSpec.toString(widthMeasureSpec));
+
+        int count = getChildCount();
+
+        if (count == 0) {
+            return 0;
+        }
+
+        int needWidth = 0;
+        for (int i = 0; i < count; i++) {
+            needWidth += getMeasuredWidthWithMargins(getChildAt(i));
+        }
+
+        int width = 0;
+
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
 
         switch (widthMode) {
-            /**
-             * mode共有三种情况，取值分别为MeasureSpec.UNSPECIFIED, MeasureSpec.EXACTLY,
-             * MeasureSpec.AT_MOST。
-             *
-             *
-             * MeasureSpec.EXACTLY是精确尺寸，
-             * 当我们将控件的layout_width或layout_height指定为具体数值时如andorid
-             * :layout_width="50dip"，或者为FILL_PARENT是，都是控件大小已经确定的情况，都是精确尺寸。
-             *
-             *
-             * MeasureSpec.AT_MOST是最大尺寸，
-             * 当控件的layout_width或layout_height指定为WRAP_CONTENT时
-             * ，控件大小一般随着控件的子空间或内容进行变化，此时控件尺寸只要不超过父控件允许的最大尺寸即可
-             * 。因此，此时的mode是AT_MOST，size给出了父控件允许的最大尺寸。
-             *
-             *
-             * MeasureSpec.UNSPECIFIED是未指定尺寸，这种情况不多，一般都是父控件是AdapterView，
-             * 通过measure方法传入的模式。
-             */
-            case MeasureSpec.AT_MOST:
+
             case MeasureSpec.EXACTLY:
-                result = widthSize;
+                width = widthSize;
+
+                if (needWidth > 0) {
+
+                    mLineCount = 1;
+
+                    int widthUsed = 0;
+                    for (int i = 0; i < count; i++) {
+
+                        View child = getChildAt(i);
+                        LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                        final int leftMargin = lp.leftMargin;
+                        final int childMeasuredWidth = child.getMeasuredWidth();
+
+                        if (widthUsed + childMeasuredWidth + leftMargin > width && widthUsed != 0) {
+                            mLineCount++;
+                            widthUsed = 0;
+                        }
+
+                        widthUsed += childMeasuredWidth + leftMargin;
+                    }
+
+                } else {
+                    mLineCount = 0;
+                }
+
                 break;
+
+            case MeasureSpec.AT_MOST:
+                if (needWidth > 0) {
+
+                    mLineCount = 1;
+
+                    width = Math.min(needWidth, widthSize);
+
+                    int widthUsed = 0;
+                    int maxWidthUsed = 0;
+                    for (int i = 0; i < count; i++) {
+
+                        View child = getChildAt(i);
+                        final int childMeasuredWidth = child.getMeasuredWidth();
+                        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                        final int leftMargin = lp.leftMargin;
+
+                        if (widthUsed + childMeasuredWidth + leftMargin > width && widthUsed != 0) {
+                            mLineCount++;
+                            widthUsed = 0;
+                        }
+
+                        widthUsed += childMeasuredWidth + leftMargin;
+                        maxWidthUsed = Math.max(maxWidthUsed, widthUsed);
+                    }
+
+                    width = maxWidthUsed;
+
+                } else {
+                    width = 0;
+                    mLineCount = 0;
+                }
+
+                break;
+
+            case MeasureSpec.UNSPECIFIED:
+                width = needWidth;
+                mLineCount = 1;
+
+                break;
+
         }
-        return result;
+
+        Log.d(TAG, "after measureWidth(), mWidth: " + width + ", mLineCount: " + mLineCount);
+
+        return width;
     }
 
-    private int measureHeight(int pHeightMeasureSpec) {
-        int result = 0;
+    private int measureHeight(int heightMeasureSpec) {
 
-        int heightMode = MeasureSpec.getMode(pHeightMeasureSpec);
-        int heightSize = MeasureSpec.getSize(pHeightMeasureSpec);
+        Log.d(TAG, "enter measureHeight(), heightMeasureSpec: " + MeasureSpec.toString(heightMeasureSpec));
+
+        int count = getChildCount();
+        int childHeight = count > 0 ? getMeasuredHeightWithMargins(getChildAt(0)) : 0;
+
+        int height = 0;
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
         switch (heightMode) {
-            case MeasureSpec.AT_MOST:
+
             case MeasureSpec.EXACTLY:
-                result = heightSize;
+                height = heightSize;
+                break;
+
+            case MeasureSpec.AT_MOST:
+                int needHeight = mLineCount * childHeight;
+                height = Math.min(needHeight, heightSize);
+
+                break;
+
+            case MeasureSpec.UNSPECIFIED:
+                height = mLineCount * childHeight;
+
                 break;
         }
-        return result;
+
+        Log.d(TAG, "after measureHeight(), mHeight: " + height);
+
+        return height;
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
 
-        int parentWidth = getMeasuredWidth() - getPaddingTop();
-        int startX = l + getPaddingLeft();
-        int startY = t + getPaddingTop();
+        Log.d(TAG, "onLayout...");
 
-        Log.d("ZLayout", "paddingLeft: " + getPaddingLeft());
-        Log.d("ZLayout", "paddingRight: " + getPaddingTop());
+        int contentWidth = r - l - getPaddingLeft() - getPaddingRight();
+        int startX = getPaddingLeft();
+        int startY = getPaddingTop();
 
         for (int i = 0, count = getChildCount(); i < count; i++) {
             View child = getChildAt(i);
-//            MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
 
             int childHeight = child.getMeasuredHeight();
             int childWidth = child.getMeasuredWidth();
 
-            if (startX + childWidth > parentWidth) {
+            Log.d(TAG, "childHeight: " + childHeight);
+            Log.d(TAG, "childWidth: " + childWidth);
 
-                if (i == 0) {
-                    Log.d("ZLayout", "no enough space for child view");
-                    return;
+            ZLayout.LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            final int leftMargin = lp.leftMargin;
+            final int topMargin = lp.topMargin;
 
-                } else {
-                    startX = l + getPaddingLeft();
-                    startY += childHeight;
-                }
+            if (i != 0 && startX + leftMargin + childWidth > contentWidth) {
+                startX = getPaddingLeft();
+                startY += getMeasuredHeightWithMargins(child);
             }
 
-            child.layout(startX, startY, startX + childWidth, startY + childHeight);
-
-            startX += childWidth;
+            child.layout(startX + leftMargin, startY + topMargin, startX + leftMargin + childWidth, startY + topMargin + childHeight);
+            startX += getMeasuredWidthWithMargins(child);
         }
     }
 
-    public static class MarginLayoutParams extends ViewGroup.MarginLayoutParams {
+    private static int getMeasuredWidthWithMargins(View v) {
+        ZLayout.LayoutParams lp = (LayoutParams) v.getLayoutParams();
+        return v.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
+    }
 
-        public MarginLayoutParams(Context c, AttributeSet attrs) {
+    private static int getMeasuredHeightWithMargins(View v) {
+        ZLayout.LayoutParams lp = (LayoutParams) v.getLayoutParams();
+        return v.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
+    }
+
+    @Override
+    public LayoutParams generateLayoutParams(AttributeSet attrs) {
+        return new LayoutParams(getContext(), attrs);
+    }
+
+    @Override
+    public LayoutParams generateDefaultLayoutParams() {
+        return new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+    }
+
+
+    public static class LayoutParams extends ViewGroup.MarginLayoutParams {
+
+        public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
         }
 
-        public MarginLayoutParams(int width, int height) {
+        public LayoutParams(int width, int height) {
             super(width, height);
+        }
+
+        public LayoutParams(MarginLayoutParams source) {
+            super(source);
+        }
+
+        public LayoutParams(ViewGroup.LayoutParams source) {
+            super(source);
         }
     }
 }
