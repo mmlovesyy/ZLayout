@@ -24,17 +24,17 @@ public class ZLayoutMainActivity extends AppCompatActivity {
         findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                TextView img = new TextView(getApplicationContext());
-//                img.setSingleLine(true);
-//                img.setEllipsize(TextUtils.TruncateAt.END);
-//                img.setText(s[(int) Math.floor(Math.random() * s.length)]);
-//                img.setBackgroundDrawable(getResources().getDrawable(R.drawable.background_child));
-//                img.setPadding(5, 5, 5, 5);
-//                img.setTextColor(getResources().getColor(R.color.colorPrimary));
-//                Log.d("ZLayout", img.getText().toString());
+                TextView img = new TextView(getApplicationContext());
+                img.setSingleLine(true);
+                img.setEllipsize(TextUtils.TruncateAt.END);
+                img.setText(s[(int) Math.floor(Math.random() * s.length)]);
+                img.setBackgroundDrawable(getResources().getDrawable(R.drawable.background_child));
+                img.setPadding(5, 5, 5, 5);
+                img.setTextColor(getResources().getColor(R.color.colorPrimary));
+                Log.d("ZLayout", img.getText().toString());
 
-                ImageView img = new ImageView(getApplicationContext());
-                img.setImageDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
+//                ImageView img = new ImageView(getApplicationContext());
+//                img.setImageDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
                 ViewGroup.MarginLayoutParams lp = new ZLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 lp.leftMargin = 20;
                 lp.topMargin = 10;
