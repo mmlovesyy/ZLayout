@@ -1,10 +1,7 @@
 # ZLayout
 
-This is a customized layout.
+会自动换行的 LinearLayout，当水平方向不足以放置子 View 时，会自动从下一行开始放置。
 
-A muti-line layout which would behave as a horizontal LinearLayout but places new added child views in next line when there is no enough horizontal space.
-
-Just like a Z !
 <br />
 <center>
 <img src="demo.gif" width="400px" />

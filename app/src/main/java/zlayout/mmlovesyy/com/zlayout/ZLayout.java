@@ -79,14 +79,12 @@ public class ZLayout extends ViewGroup {
                         final int leftMargin = lp.leftMargin;
                         final int childMeasuredWidth = child.getMeasuredWidth();
 
-                        if (widthUsed + childMeasuredWidth + leftMargin <= width) {
-                            widthUsed += childMeasuredWidth + leftMargin;
-
-                        } else {
-                            i--;
-                            widthUsed = 0;
+                        if (widthUsed + childMeasuredWidth + leftMargin > width && widthUsed != 0) {
                             mLineCount++;
+                            widthUsed = 0;
                         }
+
+                        widthUsed += childMeasuredWidth + leftMargin;
                     }
 
                 } else {
@@ -111,20 +109,12 @@ public class ZLayout extends ViewGroup {
                         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
                         final int leftMargin = lp.leftMargin;
 
-                        if (widthUsed + childMeasuredWidth + leftMargin <= width) {
-                            widthUsed += childMeasuredWidth + leftMargin;
-
-                        } else {
-
-//                            if (mLineCount) {
-//                                break;
-//                            }
-
-                            i--;
-                            widthUsed = 0;
+                        if (widthUsed + childMeasuredWidth + leftMargin > width && widthUsed != 0) {
                             mLineCount++;
+                            widthUsed = 0;
                         }
 
+                        widthUsed += childMeasuredWidth + leftMargin;
                         maxWidthUsed = Math.max(maxWidthUsed, widthUsed);
                     }
 
@@ -206,17 +196,7 @@ public class ZLayout extends ViewGroup {
             final int leftMargin = lp.leftMargin;
             final int topMargin = lp.topMargin;
 
-            Log.d(TAG, "startX: " + startX);
-            Log.d(TAG, "leftMargin: " + leftMargin);
-            Log.d(TAG, "contentWidth: " + contentWidth);
-
-            if (startX + leftMargin + childWidth > contentWidth) {
-
-                if (i == 0) {
-                    Log.d(TAG, "no enough space for the 1st child view");
-                    return;
-                }
-
+            if (i != 0 && startX + leftMargin + childWidth > contentWidth) {
                 startX = getPaddingLeft();
                 startY += getMeasuredHeightWithMargins(child);
             }
