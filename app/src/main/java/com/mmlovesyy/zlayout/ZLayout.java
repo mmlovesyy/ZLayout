@@ -1,4 +1,4 @@
-package zlayout.mmlovesyy.com.zlayout;
+package com.mmlovesyy.zlayout;
 
 import android.content.Context;
 import android.util.AttributeSet;
