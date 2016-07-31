@@ -15,7 +15,9 @@ public class ZLayout extends ViewGroup {
 
     private int mWidth;
     private int mHeight;
-    private int mLineCount;
+    private int mLineCount = 1;
+    private int mLastLineWidthUsed = 0;
+    private int mMaxWidthUsed = 0;
 
     public ZLayout(Context context) {
         super(context);
@@ -52,83 +54,51 @@ public class ZLayout extends ViewGroup {
             return 0;
         }
 
-        int needWidth = 0;
-        for (int i = 0; i < count; i++) {
-            needWidth += getMeasuredWidthWithMargins(getChildAt(i));
-        }
-
         int width = 0;
 
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+
+        View child = getChildAt(count - 1);
+        LayoutParams lp = (LayoutParams) child.getLayoutParams();
+        final int leftMargin = lp.leftMargin;
+        final int childMeasuredWidth = child.getMeasuredWidth();
 
         switch (widthMode) {
 
             case MeasureSpec.EXACTLY:
                 width = widthSize;
 
-                if (needWidth > 0) {
-
-                    mLineCount = 1;
-
-                    int widthUsed = 0;
-                    for (int i = 0; i < count; i++) {
-
-                        View child = getChildAt(i);
-                        LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                        final int leftMargin = lp.leftMargin;
-                        final int childMeasuredWidth = child.getMeasuredWidth();
-
-                        if (widthUsed + childMeasuredWidth + leftMargin > width && widthUsed != 0) {
-                            mLineCount++;
-                            widthUsed = 0;
-                        }
-
-                        widthUsed += childMeasuredWidth + leftMargin;
-                    }
-
-                } else {
-                    mLineCount = 0;
+                if (mLastLineWidthUsed + childMeasuredWidth + leftMargin > width && mLastLineWidthUsed != 0) {
+                    mLineCount++;
+                    mLastLineWidthUsed = 0;
                 }
+
+                mLastLineWidthUsed += childMeasuredWidth + leftMargin;
 
                 break;
 
             case MeasureSpec.AT_MOST:
-                if (needWidth > 0) {
 
-                    mLineCount = 1;
-
-                    width = Math.min(needWidth, widthSize);
-
-                    int widthUsed = 0;
-                    int maxWidthUsed = 0;
-                    for (int i = 0; i < count; i++) {
-
-                        View child = getChildAt(i);
-                        final int childMeasuredWidth = child.getMeasuredWidth();
-                        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                        final int leftMargin = lp.leftMargin;
-
-                        if (widthUsed + childMeasuredWidth + leftMargin > width && widthUsed != 0) {
-                            mLineCount++;
-                            widthUsed = 0;
-                        }
-
-                        widthUsed += childMeasuredWidth + leftMargin;
-                        maxWidthUsed = Math.max(maxWidthUsed, widthUsed);
-                    }
-
-                    width = maxWidthUsed;
-
-                } else {
-                    width = 0;
-                    mLineCount = 0;
+                if (mLastLineWidthUsed + childMeasuredWidth + leftMargin > widthSize && mLastLineWidthUsed != 0) {
+                    mLineCount++;
+                    mLastLineWidthUsed = 0;
                 }
+
+                mLastLineWidthUsed += childMeasuredWidth + leftMargin;
+                mLastLineWidthUsed = Math.min(widthSize, mLastLineWidthUsed);
+                mMaxWidthUsed = Math.max(mMaxWidthUsed, mLastLineWidthUsed);
+
+                width = mMaxWidthUsed;
 
                 break;
 
             case MeasureSpec.UNSPECIFIED:
-                width = needWidth;
+
+                for (int i = 0; i < count; i++) {
+                    width += getMeasuredWidthWithMargins(getChildAt(i));
+                }
+
                 mLineCount = 1;
 
                 break;
@@ -145,6 +115,10 @@ public class ZLayout extends ViewGroup {
         Log.d(TAG, "enter measureHeight(), heightMeasureSpec: " + MeasureSpec.toString(heightMeasureSpec));
 
         int count = getChildCount();
+        if (count == 0) {
+            return 0;
+        }
+
         int childHeight = count > 0 ? getMeasuredHeightWithMargins(getChildAt(0)) : 0;
 
         int height = 0;
