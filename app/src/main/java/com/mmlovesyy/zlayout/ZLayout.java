@@ -1,6 +1,7 @@
 package com.mmlovesyy.zlayout;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -17,12 +18,23 @@ public class ZLayout extends ViewGroup {
     private int mHeight;
     private int mLineCount;
 
+    private float mLineSpacing = 0;
+
     public ZLayout(Context context) {
         super(context);
     }
 
     public ZLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.ZLayout, 0, 0);
+        try {
+            mLineSpacing = ta.getDimension(R.styleable.ZLayout_lineSpacing, 0);
+
+            Log.d(TAG, "mLineSpacing: " + mLineSpacing);
+        } finally {
+            ta.recycle();
+        }
     }
 
     public ZLayout(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -151,6 +163,8 @@ public class ZLayout extends ViewGroup {
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
+        int totalSpacing = mLineCount > 1 ? (int) ((mLineCount - 1) * mLineSpacing) : 0;
+
         switch (heightMode) {
 
             case MeasureSpec.EXACTLY:
@@ -159,12 +173,12 @@ public class ZLayout extends ViewGroup {
 
             case MeasureSpec.AT_MOST:
                 int needHeight = mLineCount * childHeight;
-                height = Math.min(needHeight, heightSize);
+                height = Math.min(needHeight + totalSpacing, heightSize);
 
                 break;
 
             case MeasureSpec.UNSPECIFIED:
-                height = mLineCount * childHeight;
+                height = mLineCount * childHeight + totalSpacing;
 
                 break;
         }
@@ -198,7 +212,7 @@ public class ZLayout extends ViewGroup {
 
             if (i != 0 && startX + leftMargin + childWidth > contentWidth) {
                 startX = getPaddingLeft();
-                startY += getMeasuredHeightWithMargins(child);
+                startY += getMeasuredHeightWithMargins(child) + mLineSpacing;
             }
 
             child.layout(startX + leftMargin, startY + topMargin, startX + leftMargin + childWidth, startY + topMargin + childHeight);
