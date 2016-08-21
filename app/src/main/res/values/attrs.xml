@@ -3,6 +3,7 @@
 
     <declare-styleable name="ZLayout">
         <attr name="lineSpacing" format="dimension" />
+        <attr name="maxLines" format="integer" />
     </declare-styleable>
-    
+
 </resources>

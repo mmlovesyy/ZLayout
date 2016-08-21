@@ -28,9 +28,8 @@
             android:layout_height="wrap_content"
             android:background="@drawable/background_zlayout"
             tools:context="com.mmlovesyy.zlayout.ZLayoutMainActivity"
-            z:lineSpacing="10dp">
-
-        </com.mmlovesyy.zlayout.ZLayout>
+            z:lineSpacing="40dp"
+            z:maxLines="4" />
 
     </ScrollView>
 
