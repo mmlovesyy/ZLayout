@@ -2,7 +2,16 @@
 
 会自动换行的 LinearLayout，当水平方向不足以放置子 View 时，会自动从下一行开始放置。
 
+## 自定义属性
+
+- lineSpacing，行间距；
+- maxLines，显示的最大行数；
+
+
+## 注意
 当前版本仅支持子 View 高度相同的情景，如当子 View 是 TextView 时，请务必确保其为单行。
+
+## Demo 演示
 
 <br />
 <center>
