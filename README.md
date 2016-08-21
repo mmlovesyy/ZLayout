@@ -7,6 +7,19 @@
 - lineSpacing，行间距；
 - maxLines，显示的最大行数；
 
+使用范例：
+
+```
+<com.mmlovesyy.zlayout.ZLayout xmlns:z="http://schemas.android.com/apk/res/com.mmlovesyy.zlayout"
+            android:id="@+id/z"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_zlayout"
+            z:lineSpacing="40dp"
+            z:maxLines="4" />
+
+```
+
 
 ## 注意
 当前版本仅支持子 View 高度相同的情景，如当子 View 是 TextView 时，请务必确保其为单行。

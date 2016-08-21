@@ -13,7 +13,7 @@
         android:background="?attr/selectableItemBackground"
         android:text="click to add views..." />
 
-    <ScrollView xmlns:tools="http://schemas.android.com/tools"
+    <ScrollView
         android:id="@+id/screen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,7 +27,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/background_zlayout"
-            tools:context="com.mmlovesyy.zlayout.ZLayoutMainActivity"
             z:lineSpacing="40dp"
             z:maxLines="4" />
 
