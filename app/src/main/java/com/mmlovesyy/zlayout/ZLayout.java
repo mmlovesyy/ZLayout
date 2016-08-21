@@ -1,6 +1,7 @@
 package com.mmlovesyy.zlayout;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +17,11 @@ public class ZLayout extends ViewGroup {
     private int mWidth;
     private int mHeight;
     private int mLineCount;
+    private int mChildCountNeedLayout = 0;
+
+    // attrs
+    private float mLineSpacing = 0;
+    private int mMaxLines = 0;
 
     public ZLayout(Context context) {
         super(context);
@@ -23,6 +29,17 @@ public class ZLayout extends ViewGroup {
 
     public ZLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.ZLayout, 0, 0);
+        try {
+            mLineSpacing = ta.getDimension(R.styleable.ZLayout_lineSpacing, 0);
+            mMaxLines = ta.getInt(R.styleable.ZLayout_maxLines, Integer.MAX_VALUE);
+
+            Log.d(TAG, "mLineSpacing: " + mLineSpacing);
+            Log.d(TAG, "mMaxLines: " + mMaxLines);
+        } finally {
+            ta.recycle();
+        }
     }
 
     public ZLayout(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -47,8 +64,9 @@ public class ZLayout extends ViewGroup {
         Log.d(TAG, "enter measureWidth(), widthMeasureSpec: " + MeasureSpec.toString(widthMeasureSpec));
 
         int count = getChildCount();
+        mChildCountNeedLayout = count;
 
-        if (count == 0) {
+        if (count <= 0 || mMaxLines <= 0) {
             return 0;
         }
 
@@ -82,6 +100,12 @@ public class ZLayout extends ViewGroup {
                         if (widthUsed + childMeasuredWidth + leftMargin > width && widthUsed != 0) {
                             mLineCount++;
                             widthUsed = 0;
+
+                            if (mLineCount > mMaxLines) {
+                                mLineCount = mMaxLines;
+                                mChildCountNeedLayout = i;
+                                break;
+                            }
                         }
 
                         widthUsed += childMeasuredWidth + leftMargin;
@@ -111,6 +135,13 @@ public class ZLayout extends ViewGroup {
 
                         if (widthUsed + childMeasuredWidth + leftMargin > width && widthUsed != 0) {
                             mLineCount++;
+
+                            if (mLineCount > mMaxLines) {
+                                mLineCount = mMaxLines;
+                                mChildCountNeedLayout = i;
+                                break;
+                            }
+
                             widthUsed = 0;
                         }
 
@@ -145,11 +176,18 @@ public class ZLayout extends ViewGroup {
         Log.d(TAG, "enter measureHeight(), heightMeasureSpec: " + MeasureSpec.toString(heightMeasureSpec));
 
         int count = getChildCount();
-        int childHeight = count > 0 ? getMeasuredHeightWithMargins(getChildAt(0)) : 0;
+
+        if (count <= 0 || mMaxLines <= 0) {
+            return 0;
+        }
+
+        int childHeight = getMeasuredHeightWithMargins(getChildAt(0));
 
         int height = 0;
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        int totalSpacing = mLineCount > 1 ? (int) ((mLineCount - 1) * mLineSpacing) : 0;
 
         switch (heightMode) {
 
@@ -159,12 +197,12 @@ public class ZLayout extends ViewGroup {
 
             case MeasureSpec.AT_MOST:
                 int needHeight = mLineCount * childHeight;
-                height = Math.min(needHeight, heightSize);
+                height = Math.min(needHeight + totalSpacing, heightSize);
 
                 break;
 
             case MeasureSpec.UNSPECIFIED:
-                height = mLineCount * childHeight;
+                height = mLineCount * childHeight + totalSpacing;
 
                 break;
         }
@@ -179,18 +217,17 @@ public class ZLayout extends ViewGroup {
 
         Log.d(TAG, "onLayout...");
 
+        Log.d(TAG, "mChildCountNeedLayout: " + mChildCountNeedLayout);
+
         int contentWidth = r - l - getPaddingLeft() - getPaddingRight();
         int startX = getPaddingLeft();
         int startY = getPaddingTop();
 
-        for (int i = 0, count = getChildCount(); i < count; i++) {
+        for (int i = 0; i < mChildCountNeedLayout; i++) {
             View child = getChildAt(i);
 
             int childHeight = child.getMeasuredHeight();
             int childWidth = child.getMeasuredWidth();
-
-            Log.d(TAG, "childHeight: " + childHeight);
-            Log.d(TAG, "childWidth: " + childWidth);
 
             ZLayout.LayoutParams lp = (LayoutParams) child.getLayoutParams();
             final int leftMargin = lp.leftMargin;
@@ -198,12 +235,22 @@ public class ZLayout extends ViewGroup {
 
             if (i != 0 && startX + leftMargin + childWidth > contentWidth) {
                 startX = getPaddingLeft();
-                startY += getMeasuredHeightWithMargins(child);
+                startY += getMeasuredHeightWithMargins(child) + mLineSpacing;
             }
 
             child.layout(startX + leftMargin, startY + topMargin, startX + leftMargin + childWidth, startY + topMargin + childHeight);
             startX += getMeasuredWidthWithMargins(child);
         }
+    }
+
+    public void setMaxLines(int maxLines) {
+        this.mMaxLines = maxLines;
+        requestLayout();
+    }
+
+    public void setLineSpacing(int lineSpacing) {
+        this.mLineSpacing = lineSpacing;
+        requestLayout();
     }
 
     private static int getMeasuredWidthWithMargins(View v) {

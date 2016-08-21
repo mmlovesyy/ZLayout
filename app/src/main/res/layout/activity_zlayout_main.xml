@@ -13,25 +13,22 @@
         android:background="?attr/selectableItemBackground"
         android:text="click to add views..." />
 
-    <ScrollView xmlns:tools="http://schemas.android.com/tools"
+    <ScrollView
         android:id="@+id/screen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        tools:context="zlayout.mmlovesyy.com.zlayout.ZLayoutMainActivity">
+        android:paddingTop="@dimen/activity_vertical_margin">
 
-        <com.mmlovesyy.zlayout.ZLayout xmlns:tools="http://schemas.android.com/tools"
+        <com.mmlovesyy.zlayout.ZLayout xmlns:z="http://schemas.android.com/apk/res/com.mmlovesyy.zlayout"
             android:id="@+id/z"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:background="@drawable/background_zlayout"
-            tools:context="com.mmlovesyy.zlayout.ZLayoutMainActivity">
-
-        </com.mmlovesyy.zlayout.ZLayout>
+            z:lineSpacing="40dp"
+            z:maxLines="4" />
 
     </ScrollView>
 

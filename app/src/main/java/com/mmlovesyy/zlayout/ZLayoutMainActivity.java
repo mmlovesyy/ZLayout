@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ZLayoutMainActivity extends AppCompatActivity {
@@ -19,6 +20,17 @@ public class ZLayoutMainActivity extends AppCompatActivity {
 
         final String[] s = new String[]{"xiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaona"
                 , "linus", "lei", "xueyan.lin"};
+
+        for (int i = 0; i < 18; i++) {
+            ImageView img = new ImageView(getApplicationContext());
+            img.setImageDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
+            ViewGroup.MarginLayoutParams lp = new ZLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            lp.leftMargin = 20;
+            lp.topMargin = 10;
+            lp.rightMargin = 0;
+            lp.bottomMargin = 0;
+//            zLayout.addView(img, lp);
+        }
 
         findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
             @Override

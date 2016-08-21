@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ZLayout">
+        <attr name="lineSpacing" format="dimension" />
+        <attr name="maxLines" format="integer" />
+    </declare-styleable>
+
+</resources>
