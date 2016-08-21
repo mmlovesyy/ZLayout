@@ -243,6 +243,16 @@ public class ZLayout extends ViewGroup {
         }
     }
 
+    public void setMaxLines(int maxLines) {
+        this.mMaxLines = maxLines;
+        requestLayout();
+    }
+
+    public void setLineSpacing(int lineSpacing) {
+        this.mLineSpacing = lineSpacing;
+        requestLayout();
+    }
+
     private static int getMeasuredWidthWithMargins(View v) {
         ZLayout.LayoutParams lp = (LayoutParams) v.getLayoutParams();
         return v.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
