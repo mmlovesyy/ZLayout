@@ -20,6 +20,16 @@
 
 ```
 
+或者
+
+```
+final ZLayout zLayout = new ZLayout(this);
+ViewGroup.LayoutParams zLp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+zLayout.setMaxLines(2);
+zLayout.setLineSpacing(200);
+zLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.background_zlayout));
+```
+
 
 ## 注意
 当前版本仅支持子 View 高度相同的情景，如当子 View 是 TextView 时，请务必确保其为单行。
