@@ -7,7 +7,7 @@
     </declare-styleable>
 
     <declare-styleable name="TagTextView">
-        <attr name="state_checked" format="boolean" />
+        <attr name="checked" format="boolean" />
     </declare-styleable>
 
 </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item app:state_checked="true">
+    <item app:checked="true">
         <shape>
             <corners android:radius="4.0dp" />
             <solid android:color="#fff1ed" />
@@ -8,7 +8,7 @@
             <padding android:left="6dp" android:right="6dp" />
         </shape>
     </item>
-    <item app:state_checked="false">
+    <item app:checked="false">
         <shape>
             <corners android:radius="4.0dp" />
             <solid android:color="#ffffff" />

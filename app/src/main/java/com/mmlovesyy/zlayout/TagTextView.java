@@ -15,7 +15,7 @@ public final class TagTextView extends TextView implements Checkable {
     private boolean mChecked = false;
 
     private static final int[] CHECKED_STATE_SET = {
-            R.attr.state_checked
+            R.attr.checked
     };
 
     public TagTextView(Context context) {
@@ -27,7 +27,7 @@ public final class TagTextView extends TextView implements Checkable {
 
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.TagTextView, 0, 0);
         try {
-            mChecked = ta.getBoolean(R.styleable.TagTextView_state_checked, false);
+            mChecked = ta.getBoolean(R.styleable.TagTextView_checked, false);
         } finally {
             ta.recycle();
         }
@@ -44,7 +44,7 @@ public final class TagTextView extends TextView implements Checkable {
             final int[] states = super.onCreateDrawableState(extraSpace + 1);
             mergeDrawableStates(states, CHECKED_STATE_SET);
             return states;
-            
+
         } else {
             return super.onCreateDrawableState(extraSpace);
         }
