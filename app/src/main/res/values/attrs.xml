@@ -6,4 +6,8 @@
         <attr name="maxLines" format="integer" />
     </declare-styleable>
 
+    <declare-styleable name="TagTextView">
+        <attr name="state_checked" format="boolean" />
+    </declare-styleable>
+
 </resources>

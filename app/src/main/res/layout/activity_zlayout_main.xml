@@ -13,6 +13,14 @@
         android:background="?attr/selectableItemBackground"
         android:text="click to add views..." />
 
+    <com.mmlovesyy.zlayout.TagTextView
+        android:id="@+id/tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_tag"
+        android:text="你瞅啥"
+        android:textColor="@color/tag_color" />
+
     <ScrollView
         android:id="@+id/screen"
         android:layout_width="match_parent"
@@ -22,13 +30,13 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin">
 
-        <com.mmlovesyy.zlayout.ZLayout xmlns:z="http://schemas.android.com/apk/res/com.mmlovesyy.zlayout"
-            android:id="@+id/z"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/background_zlayout"
-            z:lineSpacing="40dp"
-            z:maxLines="4" />
+        <!--<com.mmlovesyy.zlayout.ZLayout xmlns:z="http://schemas.android.com/apk/res/com.mmlovesyy.zlayout"-->
+        <!--android:id="@+id/z"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="@drawable/background_zlayout"-->
+        <!--z:lineSpacing="40dp"-->
+        <!--z:maxLines="4" />-->
 
     </ScrollView>
 
