@@ -21,7 +21,7 @@ public class ZLayout extends ViewGroup {
 
     // attrs
     private float mLineSpacing = 0;
-    private int mMaxLines = 0;
+    private int mMaxLines = Integer.MAX_VALUE;
 
     public ZLayout(Context context) {
         super(context);
