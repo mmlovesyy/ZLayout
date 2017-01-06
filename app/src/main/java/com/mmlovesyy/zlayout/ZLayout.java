@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 /**
  * Created by cmm on 16/3/7.
  */
@@ -19,9 +21,12 @@ public class ZLayout extends ViewGroup {
     private int mLineCount;
     private int mChildCountNeedLayout = 0;
 
+    private ArrayList<Integer> mBreakAtChild = new ArrayList<>(4);
+    ArrayList<Integer> mMaxHeightInEachLine = new ArrayList<>(4);
+
     // attrs
     private float mLineSpacing = 0;
-    private int mMaxLines = 0;
+    private int mMaxLines = Integer.MAX_VALUE;
 
     public ZLayout(Context context) {
         super(context);
@@ -98,7 +103,10 @@ public class ZLayout extends ViewGroup {
                         final int childMeasuredWidth = child.getMeasuredWidth();
 
                         if (widthUsed + childMeasuredWidth + leftMargin > width && widthUsed != 0) {
+
                             mLineCount++;
+                            mBreakAtChild.add(i);
+
                             widthUsed = 0;
 
                             if (mLineCount > mMaxLines) {
@@ -181,7 +189,28 @@ public class ZLayout extends ViewGroup {
             return 0;
         }
 
-        int childHeight = getMeasuredHeightWithMargins(getChildAt(0));
+
+        if (mBreakAtChild.size() > 0) {
+            mBreakAtChild.add(0, 0);
+        }
+
+        Log.d(TAG, "mBreakAtChild: " + mBreakAtChild);
+
+        mMaxHeightInEachLine = new ArrayList<>(mBreakAtChild.size());
+
+        // 简单的认为每行的第1个子view 的高度为该行最大高度
+        for (int i : mBreakAtChild) {
+            mMaxHeightInEachLine.add(getMeasuredHeightWithMargins(getChildAt(i)));
+        }
+
+        mBreakAtChild.clear();
+
+        Log.d(TAG, "mMaxHeightInEachLine: " + mMaxHeightInEachLine);
+
+        int needHeight = 0;
+        for (int height : mMaxHeightInEachLine) {
+            needHeight += height;
+        }
 
         int height = 0;
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
@@ -196,13 +225,12 @@ public class ZLayout extends ViewGroup {
                 break;
 
             case MeasureSpec.AT_MOST:
-                int needHeight = mLineCount * childHeight;
-                height = Math.min(needHeight + totalSpacing, heightSize);
+                height = Math.min(needHeight + totalSpacing + getPaddingBottom() + getPaddingTop(), heightSize);
 
                 break;
 
             case MeasureSpec.UNSPECIFIED:
-                height = mLineCount * childHeight + totalSpacing;
+                height = needHeight + totalSpacing + getPaddingBottom() + getPaddingTop();
 
                 break;
         }
@@ -217,13 +245,11 @@ public class ZLayout extends ViewGroup {
 
         Log.d(TAG, "onLayout...");
 
-        Log.d(TAG, "mChildCountNeedLayout: " + mChildCountNeedLayout);
-
         int contentWidth = r - l - getPaddingLeft() - getPaddingRight();
         int startX = getPaddingLeft();
         int startY = getPaddingTop();
 
-        for (int i = 0; i < mChildCountNeedLayout; i++) {
+        for (int i = 0, j = 0; i < mChildCountNeedLayout; i++) {
             View child = getChildAt(i);
 
             int childHeight = child.getMeasuredHeight();
@@ -235,7 +261,7 @@ public class ZLayout extends ViewGroup {
 
             if (i != 0 && startX + leftMargin + childWidth > contentWidth) {
                 startX = getPaddingLeft();
-                startY += getMeasuredHeightWithMargins(child) + mLineSpacing;
+                startY += mMaxHeightInEachLine.get(j++) + mLineSpacing;
             }
 
             child.layout(startX + leftMargin, startY + topMargin, startX + leftMargin + childWidth, startY + topMargin + childHeight);

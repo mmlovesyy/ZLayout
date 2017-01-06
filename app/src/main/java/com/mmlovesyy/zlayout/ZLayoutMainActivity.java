@@ -16,7 +16,18 @@ public class ZLayoutMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zlayout_main);
 
-        final ZLayout zLayout = (ZLayout) findViewById(R.id.z);
+        testTagTextView();
+
+//        final ZLayout zLayout = (ZLayout) findViewById(R.id.z);
+
+        final ZLayout zLayout = new ZLayout(this);
+        ViewGroup.LayoutParams zLp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        zLayout.setMaxLines(2);
+        zLayout.setLineSpacing(200);
+        zLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.background_zlayout));
+
+        ViewGroup screen = (ViewGroup) findViewById(R.id.screen);
+
 
         final String[] s = new String[]{"xiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaona"
                 , "linus", "lei", "xueyan.lin"};
@@ -29,8 +40,10 @@ public class ZLayoutMainActivity extends AppCompatActivity {
             lp.topMargin = 10;
             lp.rightMargin = 0;
             lp.bottomMargin = 0;
-//            zLayout.addView(img, lp);
+            zLayout.addView(img, lp);
         }
+
+        screen.addView(zLayout, zLp);
 
         findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,5 +68,16 @@ public class ZLayoutMainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void testTagTextView() {
+        final TagTextView tag = (TagTextView) findViewById(R.id.tag);
+
+        tag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tag.setChecked(!tag.isChecked());
+            }
+        });
     }
 }
