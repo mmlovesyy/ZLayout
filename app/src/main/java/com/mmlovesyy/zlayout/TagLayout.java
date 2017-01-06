@@ -97,7 +97,16 @@ public class TagLayout extends ZLayout implements OnCheckedListener {
         return builder.toString();
     }
 
-    private enum CHECKED_TYPE {
+    public void resetCheckedState() {
+
+        for (Checkable c : mCheckedViews) {
+            c.toggle();
+        }
+
+        mCheckedViews.clear();
+    }
+
+    public enum CHECKED_TYPE {
         SINGLE,
         MULTIPLE
     }

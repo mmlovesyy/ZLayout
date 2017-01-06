@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 public class TagDemoActivity extends AppCompatActivity {
@@ -28,6 +29,16 @@ public class TagDemoActivity extends AppCompatActivity {
         };
 
         addTag(tagLayout, tagText);
+
+        final CheckBox checkbox = (CheckBox) findViewById(R.id.checkbox);
+
+        checkbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tagLayout.resetCheckedState();
+                tagLayout.setCheckedType(checkbox.isChecked() ? TagLayout.CHECKED_TYPE.MULTIPLE : TagLayout.CHECKED_TYPE.SINGLE);
+            }
+        });
     }
 
     private void addTag(final TagLayout tagLayout, String[] tagText) {
