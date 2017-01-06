@@ -197,12 +197,12 @@ public class ZLayout extends ViewGroup {
 
             case MeasureSpec.AT_MOST:
                 int needHeight = mLineCount * childHeight;
-                height = Math.min(needHeight + totalSpacing, heightSize);
+                height = Math.min(needHeight + totalSpacing + getPaddingBottom() + getPaddingTop(), heightSize);
 
                 break;
 
             case MeasureSpec.UNSPECIFIED:
-                height = mLineCount * childHeight + totalSpacing;
+                height = mLineCount * childHeight + totalSpacing + getPaddingBottom() + getPaddingTop();
 
                 break;
         }
