@@ -10,7 +10,7 @@ import android.widget.TextView;
  * Created by cmm on 17/1/5.
  */
 
-public final class TagTextView extends TextView implements Checkable, IValue{
+public final class TagTextView extends TextView implements Checkable, IValue {
 
     private OnCheckedListener mOnCheckedListener;
 
@@ -73,16 +73,19 @@ public final class TagTextView extends TextView implements Checkable, IValue{
 
     @Override
     public void setChecked(boolean checked) {
+        setChecked(checked, true);
+    }
+
+    public void setChecked(boolean checked, boolean notify) {
 
         if (checked != mChecked) {
             mChecked = checked;
             refreshDrawableState();
 
-            if (mOnCheckedListener != null) {
+            if (notify && mOnCheckedListener != null) {
                 mOnCheckedListener.onChecked(this);
             }
         }
-
     }
 
     @Override
@@ -92,7 +95,7 @@ public final class TagTextView extends TextView implements Checkable, IValue{
 
     @Override
     public void toggle() {
-
+        setChecked(!mChecked, false);
     }
 
     @Override

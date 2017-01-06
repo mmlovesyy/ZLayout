@@ -3,6 +3,7 @@ package com.mmlovesyy.zlayout;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.Checkable;
 
 import com.mmlovesyy.zlayout.TagTextView.OnCheckedListener;
@@ -42,11 +43,15 @@ public class TagLayout extends ZLayout implements OnCheckedListener {
 
             if (!mCheckedViews.contains(view)) {
                 for (Checkable c : mCheckedViews) {
-                    c.setChecked(!c.isChecked());
+                    c.toggle();
                 }
 
                 mCheckedViews.clear();
                 mCheckedViews.add(view);
+
+            } else {
+                int index = mCheckedViews.indexOf(view);
+                mCheckedViews.remove(index);
             }
 
         } else if (mCheckedType == CHECKED_TYPE.MULTIPLE) {
@@ -75,12 +80,17 @@ public class TagLayout extends ZLayout implements OnCheckedListener {
     public String value() {
         StringBuilder builder = new StringBuilder();
 
-        for (int i = 0; i < mCheckedViews.size(); i++) {
+        for (int i = 0; i < getChildCount(); i++) {
 
-            Checkable view = mCheckedViews.get(i);
+            View view = getChildAt(i);
 
-            if (view instanceof IValue) {
-                builder.append(((IValue) view).value() + "  ");
+            if (view instanceof Checkable) {
+
+                boolean checkable = ((Checkable) view).isChecked();
+
+                if (checkable && view instanceof IValue) {
+                    builder.append(((IValue) view).value() + "  ");
+                }
             }
         }
 
