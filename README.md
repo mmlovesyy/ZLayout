@@ -32,13 +32,19 @@ zLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.background_z
 
 
 ## 注意
-当前版本仅支持子 View 高度相同的情景，如当子 View 是 TextView 时，请务必确保其为单行。
+如当子 View 是 TextView 时，请务必确保其为单行。
 
 ## Demo 演示
 
 <br />
 <center>
 <img src="demo.gif" width="400px" />
+</center>
+<br />
+
+<br />
+<center>
+<img src="tagdemo.gif" width="400px" />
 </center>
 <br />
 

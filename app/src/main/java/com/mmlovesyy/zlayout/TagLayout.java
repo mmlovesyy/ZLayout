@@ -99,8 +99,13 @@ public class TagLayout extends ZLayout implements OnCheckedListener {
 
     public void resetCheckedState() {
 
-        for (Checkable c : mCheckedViews) {
-            c.toggle();
+        for (int i = 0; i < getChildCount(); i++) {
+
+            View view = getChildAt(i);
+
+            if (view instanceof Checkable) {
+                ((Checkable) view).setChecked(false);
+            }
         }
 
         mCheckedViews.clear();

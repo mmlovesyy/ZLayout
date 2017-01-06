@@ -71,7 +71,7 @@ public class TagDemoActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         tagView.setChecked(!tagView.isChecked());
 
-                        Toast.makeText(v.getContext(), tagLayout.value(), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(v.getContext(), tagLayout.value(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
