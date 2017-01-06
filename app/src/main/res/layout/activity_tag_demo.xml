@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:z="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_tag_demo"
@@ -22,4 +22,4 @@
         android:padding="10dp"
         z:lineSpacing="4dp" />
 
-</RelativeLayout>
+</FrameLayout>
