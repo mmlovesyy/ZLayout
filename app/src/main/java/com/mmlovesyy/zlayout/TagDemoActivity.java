@@ -1,12 +1,12 @@
 package com.mmlovesyy.zlayout;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 public class TagDemoActivity extends AppCompatActivity {
 
@@ -15,7 +15,7 @@ public class TagDemoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tag_demo);
 
-        final ZLayout zLayout = (ZLayout) findViewById(R.id.tag_demo_z);
+        final TagLayout tagLayout = (TagLayout) findViewById(R.id.tag_demo_tag);
 
         String[] tagText = {
                 "少年，干了这碗鸡汤：",
@@ -27,15 +27,15 @@ public class TagDemoActivity extends AppCompatActivity {
                 "还没到最后"
         };
 
-        addTag(zLayout, tagText);
+        addTag(tagLayout, tagText);
     }
 
-    private void addTag(ZLayout zLayout, String[] tagText) {
+    private void addTag(final TagLayout tagLayout, String[] tagText) {
 
         for (int i = 0; i < tagText.length; i++) {
 
             String t = tagText[i];
-            final TagTextView tagView = new TagTextView(getApplicationContext());
+            final TagTextView tagView = new TagTextView(getApplicationContext(), tagLayout);
 
             // layout parameters
             ViewGroup.MarginLayoutParams lp;
@@ -59,6 +59,8 @@ public class TagDemoActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         tagView.setChecked(!tagView.isChecked());
+
+                        Toast.makeText(v.getContext(), tagLayout.value(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -73,7 +75,7 @@ public class TagDemoActivity extends AppCompatActivity {
             lp.topMargin = 10;
             lp.rightMargin = 0;
             lp.bottomMargin = 0;
-            zLayout.addView(tagView, lp);
+            tagLayout.addView(tagView, lp);
         }
     }
 }

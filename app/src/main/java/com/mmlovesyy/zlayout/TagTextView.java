@@ -10,7 +10,9 @@ import android.widget.TextView;
  * Created by cmm on 17/1/5.
  */
 
-public final class TagTextView extends TextView implements Checkable {
+public final class TagTextView extends TextView implements Checkable, IValue{
+
+    private OnCheckedListener mOnCheckedListener;
 
     private boolean mChecked = false;
 
@@ -20,6 +22,12 @@ public final class TagTextView extends TextView implements Checkable {
 
     public TagTextView(Context context) {
         super(context);
+    }
+
+    public TagTextView(Context context, OnCheckedListener listener) {
+        super(context);
+
+        mOnCheckedListener = listener;
     }
 
     public TagTextView(Context context, AttributeSet attrs) {
@@ -33,8 +41,21 @@ public final class TagTextView extends TextView implements Checkable {
         }
     }
 
-    public TagTextView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+    public TagTextView(Context context, AttributeSet attrs, OnCheckedListener listener) {
+        super(context, attrs);
+
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.TagTextView, 0, 0);
+        try {
+            mChecked = ta.getBoolean(R.styleable.TagTextView_checked, false);
+        } finally {
+            ta.recycle();
+        }
+
+        mOnCheckedListener = listener;
+    }
+
+    public void setOnCheckedListener(OnCheckedListener listener) {
+        mOnCheckedListener = listener;
     }
 
     @Override
@@ -56,6 +77,10 @@ public final class TagTextView extends TextView implements Checkable {
         if (checked != mChecked) {
             mChecked = checked;
             refreshDrawableState();
+
+            if (mOnCheckedListener != null) {
+                mOnCheckedListener.onChecked(this);
+            }
         }
 
     }
@@ -68,5 +93,14 @@ public final class TagTextView extends TextView implements Checkable {
     @Override
     public void toggle() {
 
+    }
+
+    @Override
+    public String value() {
+        return getText().toString();
+    }
+
+    public interface OnCheckedListener {
+        void onChecked(Checkable view);
     }
 }

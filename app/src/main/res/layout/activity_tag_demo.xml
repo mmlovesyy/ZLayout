@@ -11,8 +11,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.mmlovesyy.zlayout.TagDemoActivity">
 
-    <com.mmlovesyy.zlayout.ZLayout
-        android:id="@+id/tag_demo_z"
+    <com.mmlovesyy.zlayout.TagLayout
+        android:id="@+id/tag_demo_tag"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
@@ -20,6 +20,7 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/background_zlayout"
         android:padding="10dp"
+        z:checkedType="multiple"
         z:lineSpacing="4dp" />
 
 </FrameLayout>
