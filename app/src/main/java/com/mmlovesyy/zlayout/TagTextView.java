@@ -6,10 +6,6 @@ import android.util.AttributeSet;
 import android.widget.Checkable;
 import android.widget.TextView;
 
-/**
- * Created by cmm on 17/1/5.
- */
-
 public final class TagTextView extends TextView implements Checkable, IValue {
 
     private OnCheckedListener mOnCheckedListener;

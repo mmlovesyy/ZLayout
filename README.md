@@ -1,6 +1,6 @@
 # ZLayout
 
-会自动换行的 LinearLayout，当水平方向不足以放置子 View 时，会自动从下一行开始放置。
+流式布局，类似自动换行的 LinearLayout，当水平方向不足以放置子 View 时，自动从下一行开始放置。
 
 ## 自定义属性
 
@@ -32,7 +32,7 @@ zLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.background_z
 
 
 ## 注意
-如当子 View 是 TextView 时，请务必确保其为单行。
+如当子 View 是 TextView 时，请务必确保其为文本行数为单行。
 
 ## Demo 演示
 

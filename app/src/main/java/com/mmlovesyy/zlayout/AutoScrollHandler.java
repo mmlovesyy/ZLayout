@@ -7,9 +7,6 @@ import android.widget.ListView;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * Created by ragnarok on 15/7/22.
- */
 public class AutoScrollHandler {
 
     public static final int TEST_LIST_ITEM_COUNT = 300;

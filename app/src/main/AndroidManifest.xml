@@ -8,10 +8,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ZLayoutMainActivity">
+        <activity android:name=".TagDemoActivity">
         </activity>
         <activity android:name=".PerfContrastActivity"></activity>
-        <activity android:name=".TagDemoActivity">
+        <activity android:name=".ZLayoutMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

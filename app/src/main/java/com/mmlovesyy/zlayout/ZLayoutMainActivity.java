@@ -1,5 +1,6 @@
 package com.mmlovesyy.zlayout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -22,8 +23,7 @@ public class ZLayoutMainActivity extends AppCompatActivity {
 
         final ZLayout zLayout = new ZLayout(this);
         ViewGroup.LayoutParams zLp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        zLayout.setMaxLines(2);
-        zLayout.setLineSpacing(200);
+
         zLayout.setBackgroundDrawable(getResources().getDrawable(R.drawable.background_zlayout));
 
         ViewGroup screen = (ViewGroup) findViewById(R.id.screen);
@@ -31,17 +31,6 @@ public class ZLayoutMainActivity extends AppCompatActivity {
 
         final String[] s = new String[]{"xiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaonaxiaona"
                 , "linus", "lei", "xueyan.lin"};
-
-        for (int i = 0; i < 18; i++) {
-            ImageView img = new ImageView(getApplicationContext());
-            img.setImageDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
-            ViewGroup.MarginLayoutParams lp = new ZLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            lp.leftMargin = 20;
-            lp.topMargin = 10;
-            lp.rightMargin = 0;
-            lp.bottomMargin = 0;
-            zLayout.addView(img, lp);
-        }
 
         screen.addView(zLayout, zLp);
 
@@ -57,14 +46,19 @@ public class ZLayoutMainActivity extends AppCompatActivity {
                 img.setTextColor(getResources().getColor(R.color.colorPrimary));
                 Log.d("ZLayout", img.getText().toString());
 
-//                ImageView img = new ImageView(getApplicationContext());
-//                img.setImageDrawable(getResources().getDrawable(R.mipmap.ic_launcher));
                 ViewGroup.MarginLayoutParams lp = new ZLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 lp.leftMargin = 20;
                 lp.topMargin = 10;
                 lp.rightMargin = 0;
                 lp.bottomMargin = 0;
                 zLayout.addView(img, lp);
+            }
+        });
+
+        findViewById(R.id.btn_tag_demo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ZLayoutMainActivity.this, TagDemoActivity.class));
             }
         });
 

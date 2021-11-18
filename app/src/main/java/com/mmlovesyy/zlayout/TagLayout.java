@@ -11,10 +11,6 @@ import com.mmlovesyy.zlayout.TagTextView.OnCheckedListener;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by cmm on 17/1/6.
- */
-
 public class TagLayout extends ZLayout implements OnCheckedListener {
 
     private CHECKED_TYPE mCheckedType = CHECKED_TYPE.SINGLE;

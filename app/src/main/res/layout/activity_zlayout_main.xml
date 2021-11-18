@@ -11,8 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:background="?attr/selectableItemBackground"
-        android:text="click to add views..." />
+        android:text="点我添加子控件" />
+
+    <Button xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/btn_tag_demo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="查看单选/多选标签示例" />
 
     <com.mmlovesyy.zlayout.TagTextView
         android:id="@+id/tag"

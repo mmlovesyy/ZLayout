@@ -7,9 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
-/**
- * Created by jimmy.chen@dianping.com on 16-5-5.
- */
 public class ViewUtils {
 
     private static final String TAG = "ViewUtils";

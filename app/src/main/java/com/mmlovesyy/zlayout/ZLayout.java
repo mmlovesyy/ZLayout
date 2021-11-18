@@ -2,19 +2,19 @@ package com.mmlovesyy.zlayout;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
- * Created by cmm on 16/3/7.
- */
 public class ZLayout extends ViewGroup {
 
     private static final String TAG = "ZLayout";
+    private static final boolean DEBUG = false;
 
     private int mWidth;
     private int mHeight;
@@ -54,22 +54,59 @@ public class ZLayout extends ViewGroup {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
-        Log.d(TAG, "onMeasure...");
+        if (DEBUG) {
+            Log.d(TAG, "onMeasure...");
+        }
 
         measureChildren(widthMeasureSpec, heightMeasureSpec);
+
+        mBreakAtChild.clear();
 
         mWidth = measureWidth(widthMeasureSpec);
         mHeight = measureHeight(heightMeasureSpec);
 
+        if (DEBUG) {
+            Log.d(TAG, "mChildCountNeedLayout: " + mChildCountNeedLayout);
+        }
+
         setMeasuredDimension(mWidth, mHeight);
     }
 
-    private int measureWidth(int widthMeasureSpec) {
+    /**
+     * measure child with margins
+     *
+     * @param child
+     * @param parentWidthMeasureSpec
+     * @param parentHeightMeasureSpec
+     */
+    @Override
+    protected void measureChild(View child, int parentWidthMeasureSpec, int parentHeightMeasureSpec) {
+        final ViewGroup.LayoutParams lp = child.getLayoutParams();
 
-        Log.d(TAG, "enter measureWidth(), widthMeasureSpec: " + MeasureSpec.toString(widthMeasureSpec));
+        int horizontalMargins = 0;
+        int verticalMargins = 0;
+        if (lp instanceof ZLayout.MarginLayoutParams) {
+            horizontalMargins = ((MarginLayoutParams) lp).leftMargin + ((MarginLayoutParams) lp).rightMargin;
+            verticalMargins = ((MarginLayoutParams) lp).topMargin + ((MarginLayoutParams) lp).bottomMargin;
+        }
+
+        final int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec,
+                getPaddingLeft() + getPaddingRight() + horizontalMargins, lp.width);
+
+        final int childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec,
+                getPaddingTop() + getPaddingBottom() + verticalMargins, lp.height);
+
+        child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+    }
+
+    protected int measureWidth(int widthMeasureSpec) {
+
+        if (DEBUG) {
+            Log.d(TAG, "enter measureWidth(), widthMeasureSpec: " + MeasureSpec.toString(widthMeasureSpec));
+        }
 
         int count = getChildCount();
-        mChildCountNeedLayout = count;
+        mChildCountNeedLayout = 0;
 
         if (count <= 0 || mMaxLines <= 0) {
             return 0;
@@ -92,31 +129,41 @@ public class ZLayout extends ViewGroup {
 
                 if (needWidth > 0) {
 
-                    mLineCount = 1;
+                    mLineCount = 0;
 
-                    int widthUsed = 0;
-                    for (int i = 0; i < count; i++) {
+                    int widthUsed = width;
+                    for (int i = 0; i < count; ) {
 
                         View child = getChildAt(i);
-                        LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                        final int leftMargin = lp.leftMargin;
-                        final int childMeasuredWidth = child.getMeasuredWidth();
 
-                        if (widthUsed + childMeasuredWidth + leftMargin > width && widthUsed != 0) {
-
-                            mLineCount++;
-                            mBreakAtChild.add(i);
-
-                            widthUsed = 0;
-
-                            if (mLineCount > mMaxLines) {
-                                mLineCount = mMaxLines;
-                                mChildCountNeedLayout = i;
-                                break;
-                            }
+                        if (child.getVisibility() == View.GONE) {
+                            i++;
+                            continue;
                         }
 
-                        widthUsed += childMeasuredWidth + leftMargin;
+                        final int childMeasuredWidth = getMeasuredWidthWithMargins(child);
+
+                        if ((i == 0 || mBreakAtChild.contains(i)) && childMeasuredWidth > width) {
+                            break;
+                        }
+
+                        if (widthUsed + childMeasuredWidth <= (width - getPaddingLeft() - getPaddingRight())) {
+                            mChildCountNeedLayout++;
+                            widthUsed += childMeasuredWidth;
+
+                            i++;
+
+                        } else {
+
+                            if (mLineCount > mMaxLines) {
+                                break;
+
+                            } else {
+                                mLineCount++;
+                                mBreakAtChild.add(i);
+                                widthUsed = 0;
+                            }
+                        }
                     }
 
                 } else {
@@ -128,33 +175,45 @@ public class ZLayout extends ViewGroup {
             case MeasureSpec.AT_MOST:
                 if (needWidth > 0) {
 
-                    mLineCount = 1;
+                    mLineCount = 0;
 
                     width = Math.min(needWidth, widthSize);
 
-                    int widthUsed = 0;
+                    int widthUsed = width;
                     int maxWidthUsed = 0;
-                    for (int i = 0; i < count; i++) {
+                    for (int i = 0; i < count; ) {
 
                         View child = getChildAt(i);
-                        final int childMeasuredWidth = child.getMeasuredWidth();
-                        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                        final int leftMargin = lp.leftMargin;
 
-                        if (widthUsed + childMeasuredWidth + leftMargin > width && widthUsed != 0) {
-                            mLineCount++;
-
-                            if (mLineCount > mMaxLines) {
-                                mLineCount = mMaxLines;
-                                mChildCountNeedLayout = i;
-                                break;
-                            }
-
-                            widthUsed = 0;
+                        if (child.getVisibility() == View.GONE) {
+                            i++;
+                            continue;
                         }
 
-                        widthUsed += childMeasuredWidth + leftMargin;
-                        maxWidthUsed = Math.max(maxWidthUsed, widthUsed);
+                        final int childMeasuredWidth = getMeasuredWidthWithMargins(child);
+
+                        if ((i == 0 || mBreakAtChild.contains(i)) && childMeasuredWidth > width) {
+                            break;
+                        }
+
+                        if (widthUsed + childMeasuredWidth <= width - getPaddingLeft() - getPaddingRight()) {
+                            mChildCountNeedLayout++;
+                            widthUsed += childMeasuredWidth;
+                            maxWidthUsed = Math.max(maxWidthUsed, widthUsed);
+
+                            i++;
+
+                        } else {
+
+                            if (mLineCount > mMaxLines) {
+                                break;
+
+                            } else {
+                                mLineCount++;
+                                mBreakAtChild.add(i);
+                                widthUsed = 0;
+                            }
+                        }
                     }
 
                     width = maxWidthUsed;
@@ -174,27 +233,28 @@ public class ZLayout extends ViewGroup {
 
         }
 
-        Log.d(TAG, "after measureWidth(), mWidth: " + width + ", mLineCount: " + mLineCount);
+        if (DEBUG) {
+            Log.d(TAG, "after measureWidth(), mWidth: " + width + ", mLineCount: " + mLineCount);
+        }
 
         return width;
     }
 
     private int measureHeight(int heightMeasureSpec) {
 
-        Log.d(TAG, "enter measureHeight(), heightMeasureSpec: " + MeasureSpec.toString(heightMeasureSpec));
+        if (DEBUG) {
+            Log.d(TAG, "enter measureHeight(), heightMeasureSpec: " + MeasureSpec.toString(heightMeasureSpec));
+        }
 
         int count = getChildCount();
 
-        if (count <= 0 || mMaxLines <= 0) {
+        if (count <= 0 || mMaxLines <= 0 || mLineCount == 0) {
             return 0;
         }
 
-
-        if (mBreakAtChild.size() > 0) {
-            mBreakAtChild.add(0, 0);
+        if (DEBUG) {
+            Log.d(TAG, "mBreakAtChild: " + mBreakAtChild);
         }
-
-        Log.d(TAG, "mBreakAtChild: " + mBreakAtChild);
 
         mMaxHeightInEachLine = new ArrayList<>(mBreakAtChild.size());
 
@@ -203,9 +263,9 @@ public class ZLayout extends ViewGroup {
             mMaxHeightInEachLine.add(getMeasuredHeightWithMargins(getChildAt(i)));
         }
 
-        mBreakAtChild.clear();
-
-        Log.d(TAG, "mMaxHeightInEachLine: " + mMaxHeightInEachLine);
+        if (DEBUG) {
+            Log.d(TAG, "mMaxHeightInEachLine: " + mMaxHeightInEachLine);
+        }
 
         int needHeight = 0;
         for (int height : mMaxHeightInEachLine) {
@@ -235,7 +295,9 @@ public class ZLayout extends ViewGroup {
                 break;
         }
 
-        Log.d(TAG, "after measureHeight(), mHeight: " + height);
+        if (DEBUG) {
+            Log.d(TAG, "after measureHeight(), mHeight: " + height);
+        }
 
         return height;
     }
@@ -243,23 +305,31 @@ public class ZLayout extends ViewGroup {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
 
-        Log.d(TAG, "onLayout...");
+        if (DEBUG) {
+            Log.d(TAG, "onLayout..." + mBreakAtChild);
+//            System.out.println("onLayout..." + mBreakAtChild + ", mChildCountNeedLayout: " + mChildCountNeedLayout);
+        }
 
-        int contentWidth = r - l - getPaddingLeft() - getPaddingRight();
+        int contentWidth = r - l - getPaddingRight();
         int startX = getPaddingLeft();
         int startY = getPaddingTop();
 
         for (int i = 0, j = 0; i < mChildCountNeedLayout; i++) {
             View child = getChildAt(i);
 
+            if (child.getVisibility() == View.GONE) {
+                continue;
+            }
+
             int childHeight = child.getMeasuredHeight();
             int childWidth = child.getMeasuredWidth();
 
             ZLayout.LayoutParams lp = (LayoutParams) child.getLayoutParams();
             final int leftMargin = lp.leftMargin;
+            final int rightMargin = lp.rightMargin;
             final int topMargin = lp.topMargin;
 
-            if (i != 0 && startX + leftMargin + childWidth > contentWidth) {
+            if (i != 0 && startX + leftMargin + childWidth + rightMargin > contentWidth) {
                 startX = getPaddingLeft();
                 startY += mMaxHeightInEachLine.get(j++) + mLineSpacing;
             }
@@ -279,12 +349,16 @@ public class ZLayout extends ViewGroup {
         requestLayout();
     }
 
-    private static int getMeasuredWidthWithMargins(View v) {
+    protected static int getMeasuredWidthWithMargins(View v, final boolean ignoreLeftMargin) {
         ZLayout.LayoutParams lp = (LayoutParams) v.getLayoutParams();
-        return v.getMeasuredWidth() + lp.leftMargin + lp.rightMargin;
+        return v.getMeasuredWidth() + (ignoreLeftMargin ? 0 : lp.leftMargin) + lp.rightMargin;
     }
 
-    private static int getMeasuredHeightWithMargins(View v) {
+    protected static int getMeasuredWidthWithMargins(View v) {
+        return getMeasuredWidthWithMargins(v, false);
+    }
+
+    protected static int getMeasuredHeightWithMargins(View v) {
         ZLayout.LayoutParams lp = (LayoutParams) v.getLayoutParams();
         return v.getMeasuredHeight() + lp.topMargin + lp.bottomMargin;
     }
@@ -299,8 +373,20 @@ public class ZLayout extends ViewGroup {
         return new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     }
 
+    @Override
+    public void addView(View child) {
 
-    public static class LayoutParams extends ViewGroup.MarginLayoutParams {
+        if (child instanceof TextView) {
+            ((TextView) child).setSingleLine(true);
+            ((TextView) child).setMaxLines(1);
+            ((TextView) child).setEllipsize(TextUtils.TruncateAt.END);
+        }
+
+        super.addView(child);
+    }
+
+
+    public static class LayoutParams extends MarginLayoutParams {
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);

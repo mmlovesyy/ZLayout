@@ -14,11 +14,6 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-/**
- * adb shell dumpsys gfxinfo zlayout.mmlovesyy.com.zlayout reset/framestats
- * <p>
- * 将数据复制到 txt 文件中，excel - data - 文本
- */
 public class PerfContrastActivity extends AppCompatActivity {
 
     private static final String TAG = "PerfContrastActivity";
